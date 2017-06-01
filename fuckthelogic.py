@@ -15,7 +15,7 @@ def block(source):
     return blocks
 
 def parse(source):
-    return ''.join(c for c in source if c in '><+-!?{};:/\\')
+    return ''.join(c for c in source if c in '><+-!?{};:/\\~')
 
 def run(source):
     source = parse(source)
@@ -42,8 +42,10 @@ def run(source):
             FuckTheLogicdict[x] = 1 << FuckTheLogicdict[x]
         elif __symbol == "\\":
             FuckTheLogicdict[x] = 0
+        elif __symbol == "~":
+            FuckTheLogicdict[x] = FuckTheLogicdict[x-1]
         elif __symbol == '!':
-            print(chr(FuckTheLogicdict[x]), end='')
+            print(chr(FuckTheLogicdict[x]), end="")
         elif __symbol == '?':
             FuckTheLogicdict[x] = int(input('\t\t>'))
         elif __symbol == '{':
@@ -59,6 +61,7 @@ Syntaxhelp = lambda: print("""Here is a simple instuction for FuckTheLogic inter
 + incs value at the data pointer
 - decs value at the data pointer
 ! prints the byte at the data pointer
+~ copies the byte value from previous data pointer to current
 ? gets the byte to the data pointer from keyboard
 ; shifts the bits at the data pointer left by one (mul by 2)
 : shifts the bits at the data pointer right by one (div by 2)
@@ -82,7 +85,11 @@ def filerun(srcpath):
     filesource = open(srcpath, "r")
     source = filesource.read()
     filesource.close()
-    run(source)
+    try:
+        run(source)
+    except (KeyboardInterrupt, SystemExit, KeyError, IndexError, ValueError, EOFError, OverflowError):
+            print("\n\n"+"-"*8+"\nLogic was unsuccessfully fucked with error code 666")
+            exit(666)
 
 if __name__ == '__main__':
     if (len(sys.argv)==1):
