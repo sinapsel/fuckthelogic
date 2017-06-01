@@ -6,6 +6,7 @@
 * `< decs data pointer`
 * `+ incs value at the data pointer`
 * `- decs value at the data pointer`
+* `~ copies the byte value from previous data pointer to current`
 * `! prints the byte at the data pointer`
 * `? gets the byte to the data pointer from keyboard`
 * `; shifts the bits at the data pointer left by one (mul by 2)`
