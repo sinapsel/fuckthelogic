@@ -8,6 +8,7 @@
 * `- decs value at the data pointer`
 * `~ copies the byte value from previous data pointer to current`
 * `! prints the byte at the data pointer`
+* `@ prints hex value of the byte at the data pointer`
 * `? gets the byte to the data pointer from keyboard`
 * `; shifts the bits at the data pointer left by one (mul by 2)`
 * `: shifts the bits at the data pointer right by one (div by 2)`
