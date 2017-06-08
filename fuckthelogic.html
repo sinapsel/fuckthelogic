@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>FTL Interpreter</title>
+  <script>
+    function run(){
+      var program = document.forms[0].codebox.value;
+      var result = document.getElementById("output");
+
+
+      var params = document.getElementById("argv").value;
+      result.innerHTML += interpret(program, params);
+      result.innerHTML += "<br>";
+    }
+
+    function clear(frm) {
+      switch (frm){
+        case 'codebox':
+          document.forms[0].codebox.value = '';
+          break;
+        case 'argv':
+          document.forms[0].argv.value = '';
+          break;
+        case 'output':
+          document.getElementById("output").innerHTML = "";
+          break;
+        default:
+          return 0;
+      }
+      return false;
+    }
+
+    function interpret(prog, params){
+      var max_val = 65535;
+      var FuckTheLogicdict = [];
+      FuckTheLogicdict[0] = 0;
+
+      var x = 0;
+      var l = 0;
+      var argi = 0;
+
+      var filt = function(st){
+        if(parseInt(st, 16)==NaN) return 0
+        else return parseInt(st, 16);
+      }
+
+      params = (params.split(' ')).map(filt);
+      var result = '';
+
+      for (i = 0; i < prog.length; i++) {
+        switch (prog.charAt(i)) {
+          case ">":
+            x++;
+            if(FuckTheLogicdict[x]==undefined) FuckTheLogicdict[x] = 0;
+            break;
+          case "<":
+            x--; if(x<0) x = 0;
+            break;
+          case "+":
+            FuckTheLogicdict[x]++; FuckTheLogicdict[x] %= max_val;
+            break;
+          case "-":
+            FuckTheLogicdict[x]--; FuckTheLogicdict[x] %= max_val;
+            break;
+          case ";":
+            FuckTheLogicdict[x] = FuckTheLogicdict[x] << 1; FuckTheLogicdict[x] %= max_val;
+            break;
+          case ":":
+            FuckTheLogicdict[x] = FuckTheLogicdict[x] >> 1; FuckTheLogicdict[x] %= max_val;
+          case "\\":
+            FuckTheLogicdict[x] = 0;
+          case "~":
+            if(x>0)
+            FuckTheLogicdict[x] = FuckTheLogicdict[x-1];
+          case "!":
+            result += String.fromCharCode(FuckTheLogicdict[x]);
+            break;
+          case "@":
+            result += (FuckTheLogicdict[x].toString(16)).toUpperCase() + "<br/>";
+            break;
+          case "?":
+            FuckTheLogicdict[x] = params[argi];
+            argi++;
+            break;
+          case "{":
+            if (FuckTheLogicdict[x] === 0) {
+              for (i++; l > 0 || prog.charAt(i) != '}'; i++) {
+                if (prog.charAt(i) == '{') {
+                  l++;
+                }
+                if (prog.charAt(i) == '}') {
+                  l--;
+                }
+              }
+            }
+            break;
+          case "}":
+            for (i--; l > 0 || prog.charAt(i) != '{'; i--) {
+              if (prog.charAt(i) == '}') {
+                l++;
+              }
+              if (prog.charAt(i) == '{') {
+                l--;
+              }
+            }
+            i--;
+            break;
+          }
+        }
+      return result;
+  }
+
+  function showFileInput() {
+    var fileInput = document.getElementById("fileInput");
+    fileInput.click();
+}
+
+  function processFiles(files){
+    var file = files[0];
+    var reader = new FileReader();
+    reader.onload = function (e) {
+    // Когда это событие активируется, данные готовы.
+    // Вставляем их в страницу в элемент <div>
+    //var output = document.getElementById("fileOutput");
+    //var output = document.forms[0].codebox.value;
+    //output.textContent = e.target.result;
+    document.forms[0].codebox.value = e.target.result;
+  };
+  reader.readAsText(file);
+}
+
+
+  function SaveFile(){
+    var text = document.forms[0].codebox.value;
+    var BlobBlob = new Blob([text], {type : 'text/plain'});
+    ww = URL.createObjectURL(BlobBlob);
+    dl.href = ww;
+
+  }
+
+  function newFile(){
+    clear('codebox');
+    clear('argv');
+    clear('output');
+    return false;
+  }
+
+  </script>
+</head>
+  <body>
+    <div id="header">
+        <h1>FuckTheLogic Online Interpreter</h1>
+    </div>
+    <div id="main">
+        <!--<h2>Editor Box</h2>-->
+        <div id="CtrlBtns">
+          <input type="button" value="New" name="new" onclick="newFile();"/>
+          <input type="button" value="Open" name="open" onclick="showFileInput();"/>
+          <a download="main.ftl" id="dl" onclick="SaveFile()"><input type="button" value="Save" name="save"/></a>
+          <input type="button" value="Run" name="run" onclick="run(); return false;"/>
+          <div id="fileOutput"></div>
+          <input id="fileInput" type="file" size="50" onchange="processFiles(this.files)" style="display:none">
+          <br/><br/>
+        </div>
+        <div id="Editto">
+          <form id="formusMaxima">
+            <textarea name="codebox" style="width:95%; height:25em" placeholder="Here is a simple instuction for FuckTheLogic interpreter:
+> incs data pointer
+< decs data pointer
++ incs value at the data pointer
+- decs value at the data pointer
+! prints the byte at the data pointer
+@ prints hex value of the byte at the data pointer
+~ copies the byte value from previous data pointer to current
+? gets the byte to the data pointer from keyboard
+; shifts the bits at the data pointer left by one (mul by 2)
+: shifts the bits at the data pointer right by one (div by 2)
+/ shifts the bit 1 left by the value at the data pointer (2 in the power)
+\ makes byte at the data pointer equals to 0
+
+            "></textarea>
+            <h2>Arguments</h2>
+              <textarea name="argv" id="argv" style="font-size: 8pt; width: 95%"></textarea>
+            <h2>Output</h2>
+              <div id="output" style="width: 95%; font-family: Verdana; font-size: 8pt; border:solid 1px #ccccff">
+          </form>
+        </div>
+    </div>
+    <div id="footer">
+      <p>FuckTheLogic Interpreter. Made by Sinapsel. <a href="https://github.com/sinapsel/fuckthelogic">FTL on GitHub</a> 2017</p>
+    </div>
+  </body>
+</html>
