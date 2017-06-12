@@ -13,7 +13,12 @@
 * `; shifts the bits at the data pointer left by one (mul by 2)`
 * `: shifts the bits at the data pointer right by one (div by 2)`
 * `/ shifts the bit 1 left by the value at the data pointer (2 in the power)`
-* `\ makes byte at the data pointer equals to 0`
+* `{ opens loop while the value at the data pointer is not 0`
+* `} closes loop`
+* `( starts condition if the value at the data poiner is not 0`
+* `) closes condition and opens else-condition`
+* `\ closes else condition`
+*   For reference: if you need if(x) statement use (code)\, if if(not x) - ()code\, if if(x){code}else{code2} - (code)code2\ 
 
 ### Interpreting and compiling
 +   Interpreter: fuckthelogic.py
