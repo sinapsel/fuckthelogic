@@ -6,19 +6,19 @@ function run(){
 	result.innerHTML += interpret(program, params);
 	result.innerHTML += "<br>";
 }
-	function clear(frm) {
+function _clear(frm) {
 	switch (frm){
-	case 'codebox':
-		document.forms[0].codebox.value = '';
+		case 'codebox':
+			document.forms[0].codebox.value = '';
 		break;
-	case 'argv':
-		document.forms[0].argv.value = '';
+		case 'argv':
+			document.forms[0].argv.value = '';
 		break;
-	case 'output':
-		document.getElementById("output").innerHTML = "";
+		case 'output':
+			document.getElementById("output").innerHTML = "";
 		break;
-	default:
-		return 0;
+		default:
+			return 0;
 	}
 	return false;
 }
@@ -72,15 +72,21 @@ function interpret(prog, params){
 	var l = 0;
 	var argi = 0;
 
-	var filt = function(st){
+	var filtArgs = function(st){
 		if(isNaN(parseInt(st, 16))) return 0;
 		else return parseInt(st, 16);
-	}
+	};
+	var filtCode = function(p){
+		if('><+-!?{};:/~@()\\'.indexOf(p) >=0) return p;
+		else return '';
+	};
 
-	params = (params.split(' ')).map(filt);
-	console.log(params);
+	params = (params.split(' ')).map(filtArgs);
+	console.log('Got arguments:\t' + params);
 	var result = '';
-
+	prog = ((prog.split('')).map(filtCode)).join('');
+	console.log('Got code:\t' + prog);
+	
 	var LoopBlocks = getLoops(prog);
 	var CondBlocks = getConditions(prog);
 	var ElseBlocks = getElses(prog);
@@ -137,8 +143,13 @@ function interpret(prog, params){
 		}
 	FuckTheLogicdict[x] %= max_val;
 	IterCounter--;
-	if(!IterCounter) return result;	
+	if(!IterCounter){
+		console.log('Iteration overflow');
+		console.log('Output:\n'+result.replace(new RegExp('<br/>',"g"),'\n'));
+		return result;	
 	}
+	}
+	console.log('Output:\n'+result.replace(new RegExp('<br/>',"g"),'\n'));
 	return result;
 }
 
@@ -165,8 +176,8 @@ function SaveFile(){
 }
 
 function newFile(){
-	clear('codebox');
-	clear('argv');
-	clear('output');
+	_clear('codebox');
+	_clear('argv');
+	_clear('output');
 	return false;
 }
