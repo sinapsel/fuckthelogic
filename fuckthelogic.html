@@ -2,9 +2,27 @@
 <html>
 <head>
 	<title>FTL Interpreter</title>
-	<script src="ftl.js"></script>
+	<script src="fuckthelogic.js"></script>
+	
+	<script>
+	//My Placeholder implementation because of firefox doesn't supports multiline textarea placeholder
+	function chch(p){
+		cb = document.forms[0].codebox;
+		cb_style_default = "width:95%; height:25em; ";
+		cb_phvalue = 'Here is a simple instuction for FuckTheLogic interpreter: \n> incs data pointer\n< decs data pointer\n+ incs value at the data pointer\n- decs value at the data pointer\n! prints the byte at the data pointer\n@ prints hex value of the byte at the data pointer\n~ copies the byte value from previous data pointer to current\n? gets the byte to the data pointer from keyboard\n; shifts the bits at the data pointer left by one (mul by 2)\n: shifts the bits at the data pointer right by one (div by 2)\n/ shifts the bit 1 left by the value at the data pointer (2 in the power)\n{ opens loop while the value at the data pointer is not 0\n} closes loop\n( starts condition if the value at the data pointer is not 0\n) closes condition and opens else condition\n\\ closes else condition, always must exist after closing condition\n	For reference: if you need if(x) statement use (code)\\, if if(not x) - ()code\\, if if(x){code}else{code2} - (code)code2\\ ';
+	
+		if((p==1)&&(cb.value == '')){
+			cb.style = cb_style_default + "color: gray;";
+			cb.value = cb_phvalue;
+		}
+		if(p==2){
+			cb.style = cb_style_default;
+			if(cb.value == cb_phvalue) cb.value = '';
+		}
+	}
+	</script>
 </head>
-	<body>
+	<body onload="chch(1)">
 	<div id="header">
 		<h1>FuckTheLogic Online Interpreter</h1>
 	</div>
@@ -20,29 +38,7 @@
 		</div>
 		<div id="Editto">
 			<form id="formusMaxima">
-			<textarea name="codebox" style="width:95%; height:25em" placeholder=
-"
-Here is a simple instuction for FuckTheLogic interpreter: 
-> incs data pointer &#10;
-< decs data pointer 
-+ incs value at the data pointer 
-- decs value at the data pointer 
-! prints the byte at the data pointer 
-@ prints hex value of the byte at the data pointer 
-~ copies the byte value from previous data pointer to current 
-? gets the byte to the data pointer from keyboard 
-; shifts the bits at the data pointer left by one (mul by 2) 
-: shifts the bits at the data pointer right by one (div by 2) 
-/ shifts the bit 1 left by the value at the data pointer (2 in the power) 
-{ opens loop while the value at the data pointer is not 0 
-} closes loop 
-( starts condition if the value at the data pointer is not 0 
-) closes condition and opens else condition 
-\ closes else condition, always must exist after closing condition 
-	For reference: if you need if(x) statement use (code)\, if if(not x) - ()code\, if if(x){code}else{code2} - (code)code2\  
-
-
-			"></textarea>
+			<textarea name="codebox" style="width:95%; height:25em" onFocus="chch(2);" onBlur="chch(1);" spellcheck="false"></textarea>
 			<h2>Arguments</h2>
 				<textarea name="argv" id="argv" style="font-size: 8pt; width: 95%"></textarea>
 			<h2>Output</h2>
