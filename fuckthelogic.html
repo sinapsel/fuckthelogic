@@ -2,21 +2,25 @@
 <html>
 <head>
 	<title>FTL Interpreter</title>
-	<script src="fuckthelogic.js"></script>
+	<script src="ftl.js"></script>
+	<script src="https://cdn.rawgit.com/zenorocha/clipboard.js/master/dist/clipboard.min.js"></script>
 	
 	<script>
 	//My Placeholder implementation because of firefox doesn't supports multiline textarea placeholder
 	function chch(p){
 		cb = document.forms[0].codebox;
-		cb_style_default = "width:95%; height:25em; ";
+		cb_style_default = "width:95%; height:25em;";
 		cb_phvalue = 'Here is a simple instuction for FuckTheLogic interpreter: \n> incs data pointer\n< decs data pointer\n+ incs value at the data pointer\n- decs value at the data pointer\n! prints the byte at the data pointer\n@ prints hex value of the byte at the data pointer\n~ copies the byte value from previous data pointer to current\n? gets the byte to the data pointer from keyboard\n; shifts the bits at the data pointer left by one (mul by 2)\n: shifts the bits at the data pointer right by one (div by 2)\n/ shifts the bit 1 left by the value at the data pointer (2 in the power)\n{ opens loop while the value at the data pointer is not 0\n} closes loop\n( starts condition if the value at the data pointer is not 0\n) closes condition and opens else condition\n\\ closes else condition, always must exist after closing condition\n	For reference: if you need if(x) statement use (code)\\, if if(not x) - ()code\\, if if(x){code}else{code2} - (code)code2\\ ';
 	
-		if((p==1)&&(cb.value == '')){
-			cb.style = cb_style_default + "color: gray;";
-			cb.value = cb_phvalue;
+		if(p==1){
+			cb.style = cb_style_default;
+			if(cb.value == ''){
+				cb.style = cb_style_default + "color: gray;";
+				cb.value = cb_phvalue;
+			}
 		}
 		if(p==2){
-			cb.style = cb_style_default;
+			cb.style = cb_style_default + "border: 2px solid aqua; border-radius: 3px;";
 			if(cb.value == cb_phvalue) cb.value = '';
 		}
 	}
@@ -31,6 +35,7 @@
 			<input type="button" value="New" name="new" onclick="newFile();"/>
 			<input type="button" value="Open" name="open" onclick="showFileInput();"/>
 			<a download="main.ftl" id="dl" onclick="SaveFile()"><input type="button" value="Save" name="save"/></a>
+			<input type="button" value="Copy All" class="codecopy" data-clipboard-target="#codebox" />
 			<input type="button" value="Run" name="run" onclick="run(); return false;"/>
 			<div id="fileOutput"></div>
 			<input id="fileInput" type="file" size="50" onchange="processFiles(this.files)" style="display:none">
@@ -38,10 +43,11 @@
 		</div>
 		<div id="Editto">
 			<form id="formusMaxima">
-			<textarea name="codebox" style="width:95%; height:25em" onFocus="chch(2);" onBlur="chch(1);" spellcheck="false"></textarea>
+			<textarea name="codebox" id="codebox" style="width:95%; height:25em" onFocus="chch(2);" onBlur="chch(1);" spellcheck="false"></textarea>
 			<h2>Arguments</h2>
 				<textarea name="argv" id="argv" style="font-size: 8pt; width: 95%"></textarea>
-			<h2>Output</h2>
+			<h2>Output &nbsp;<input type="button" onclick="_clear('output')" value="Clear Output"/><input type="button" class="outputcopy" data-clipboard-target="#output" value="Copy Output"/></h2>
+			<script>new Clipboard('.outputcopy'); new Clipboard('.codecopy');</script>
 				<div id="output" style="width: 95%; font-family: Verdana; font-size: 8pt; border:solid 1px #ccccff">
 			</form>
 		</div>
